@@ -67,3 +67,106 @@ exports.getAllTodos = async (req, res, next) => {
     });
   } catch (err) {}
 };
+
+exports.deleteTodo = async (req, res, next) => {
+  try {
+    const todoId = req.params['todoId'];
+
+    if (isEmpty(todoId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'ToDo Id is required',
+      });
+    }
+
+    const todoExists = await ToDo.findById(todoId);
+
+    if (isEmpty(todoExists)) {
+      return res.status(404).json({
+        success: false,
+        message: `ToDo By Id ${todoId} not found`,
+      });
+    }
+
+    await todoExists.deleteOne({ _id: todoId });
+
+    return res.status(200).json({
+      success: true,
+      message: `ToDo By Id ${todoId} deleted successfully.`,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: `Failed to delete ToDo`,
+    });
+  }
+};
+
+exports.updateTodo = async (req, res, next) => {
+  try {
+    const todoId = req.params['todoId'];
+    const { name, description } = req.body;
+
+    if (isEmpty(todoId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'ToDo Id is required',
+      });
+    }
+
+    const todoExists = await ToDo.findById(todoId);
+
+    if (isEmpty(todoExists)) {
+      return res.status(404).json({
+        success: false,
+        message: `ToDo By Id ${todoId} not found`,
+      });
+    }
+
+    todoExists.name = name;
+    todoExists.description = description;
+
+    await todoExists.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Todo Updated successfully',
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to update ToDo',
+    });
+  }
+};
+exports.getToDoById = async (req, res, next) => {
+  try {
+    const todoId = req.params['todoId'];
+
+    if (isEmpty(todoId)) {
+      return res.status(400).json({
+        success: false,
+        message: 'ToDo Id is required',
+      });
+    }
+
+    const todoExists = await ToDo.findById(todoId);
+
+    if (isEmpty(todoExists)) {
+      return res.status(404).json({
+        success: false,
+        message: `ToDo By Id ${todoId} not found`,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: todoExists,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: `Failed to retrieve ToDo`,
+    });
+  }
+};

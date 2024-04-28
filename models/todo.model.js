@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const todo = require('../routes/todo.route');
 
 const todoSchema = new mongoose.Schema(
   {
@@ -18,13 +17,12 @@ const todoSchema = new mongoose.Schema(
     },
   },
   {
-    timestamps: true,
     toJSON: {
-      transfom(doc, ret) {
+      transform(doc, ret) {
         delete ret.__v;
-        delete ret.updatedAt;
       },
     },
+    timestamps: true,
   },
 );
 
